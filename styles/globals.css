@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .table {
+        @apply bg-white pb-4 pt-2 px-8 rounded-xl overflow-x-auto w-full !block;
+    }
+
+    .table table {
+        @apply w-full;
+    }
+
+    .table table thead th {
+        @apply font-normal text-zinc-400 px-4 whitespace-nowrap py-4 text-center;
+    }
+
+    .table table tbody td {
+        @apply text-center whitespace-nowrap text-sm text-zinc-600 border-b border-zinc-100 px-4 py-4;
+    }
+}
