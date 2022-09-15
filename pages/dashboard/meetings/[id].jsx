@@ -7,7 +7,7 @@ export async function getServerSideProps(ctx) {
 	const { token } = await authPage(ctx)
 	const { id } = ctx.query
 	const participants = await fetch(
-		`http://127.0.0.1:1234/meetings/participants/${id}`,
+		`${process.env.NEXT_PUBLIC_BASE_API}/meetings/participants/${id}`,
 		{
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -27,7 +27,7 @@ const index = ({ token, s_participants, id }) => {
 
 	const loadParticipants = async () => {
 		const req = await fetch(
-			`http://127.0.0.1:1234/meetings/participants/${id}?search=${fields.search}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/participants/${id}?search=${fields.search}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + token,

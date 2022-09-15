@@ -10,11 +10,14 @@ import capitalFirst from '@/utils/capitalFirst'
 export async function getServerSideProps(ctx) {
 	const { token } = await authPage(ctx)
 	const { _id } = JSON.parse(nookies.get(ctx)._user)
-	const categories = await fetch(`http://127.0.0.1:1234/categories/${_id}`, {
-		headers: {
-			Authorization: 'Bearer ' + token,
+	const categories = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}`,
+		{
+			headers: {
+				Authorization: 'Bearer ' + token,
+			},
 		},
-	})
+	)
 	const s_categories = await categories.json()
 
 	return { props: { token, s_categories: s_categories.categories, _id } }
@@ -59,7 +62,7 @@ const index = ({ token, s_categories, _id }) => {
 
 	const loadCategories = async () => {
 		const req = await fetch(
-			`http://127.0.0.1:1234/categories/${_id}?search=${
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}?search=${
 				fields.search && fields.search
 			}`,
 			{
@@ -86,14 +89,17 @@ const index = ({ token, s_categories, _id }) => {
 	async function createHandler(e) {
 		e.preventDefault()
 
-		const req = await fetch(`http://127.0.0.1:1234/categories/${_id}`, {
-			method: 'POST',
-			headers: {
-				Authorization: 'Bearer ' + token,
-				'Content-Type': 'application/json',
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}`,
+			{
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + token,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(fields),
 			},
-			body: JSON.stringify(fields),
-		})
+		)
 
 		const res = await req.json()
 
@@ -108,7 +114,7 @@ const index = ({ token, s_categories, _id }) => {
 		e.preventDefault()
 
 		const req = await fetch(
-			`http://127.0.0.1:1234/categories/${_id}/${fields._id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}/${fields._id}`,
 			{
 				method: 'PUT',
 				headers: {
@@ -132,7 +138,7 @@ const index = ({ token, s_categories, _id }) => {
 		e.preventDefault()
 
 		const req = await fetch(
-			`http://127.0.0.1:1234/categories/${_id}/${data._id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}/${data._id}`,
 			{
 				method: 'DELETE',
 				headers: {

@@ -10,7 +10,7 @@ import capitalFirst from '@/utils/capitalFirst'
 export async function getServerSideProps(ctx) {
 	const { token } = await authPage(ctx)
 	const { _id } = JSON.parse(nookies.get(ctx)._user)
-	const users = await fetch(`http://127.0.0.1:1234/users`, {
+	const users = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
 		headers: {
 			Authorization: 'Bearer ' + token,
 		},
@@ -66,7 +66,7 @@ const index = ({ token, s_users, _id }) => {
 
 	const loadUsers = async () => {
 		const req = await fetch(
-			`http://127.0.0.1:1234/users/?search=${fields.search}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/users/?search=${fields.search}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + token,
@@ -91,7 +91,7 @@ const index = ({ token, s_users, _id }) => {
 	async function createHandler(e) {
 		e.preventDefault()
 
-		const req = await fetch(`http://127.0.0.1:1234/users`, {
+		const req = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
 			method: 'POST',
 			headers: {
 				Authorization: 'Bearer ' + token,
@@ -112,14 +112,17 @@ const index = ({ token, s_users, _id }) => {
 	async function editHandler(e) {
 		e.preventDefault()
 
-		const req = await fetch(`http://127.0.0.1:1234/users/${fields._id}`, {
-			method: 'PUT',
-			headers: {
-				Authorization: 'Bearer ' + token,
-				'Content-Type': 'application/json',
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/users/${fields._id}`,
+			{
+				method: 'PUT',
+				headers: {
+					Authorization: 'Bearer ' + token,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(fields),
 			},
-			body: JSON.stringify(fields),
-		})
+		)
 
 		const res = await req.json()
 
@@ -133,13 +136,16 @@ const index = ({ token, s_users, _id }) => {
 	async function deleteHandler(data, e) {
 		e.preventDefault()
 
-		const req = await fetch(`http://127.0.0.1:1234/users/${data._id}`, {
-			method: 'DELETE',
-			headers: {
-				Authorization: 'Bearer ' + token,
-				'Content-Type': 'application/json',
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/users/${data._id}`,
+			{
+				method: 'DELETE',
+				headers: {
+					Authorization: 'Bearer ' + token,
+					'Content-Type': 'application/json',
+				},
 			},
-		})
+		)
 
 		const res = await req.json()
 

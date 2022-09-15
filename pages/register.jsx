@@ -1,5 +1,46 @@
+import { registerMeetingPage } from '@/middlewares/registerMeeting'
 import { AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
+
+export async function getServerSideProps(ctx) {
+	await registerMeetingPage(ctx)
+	const _id_meeting = JSON.parse(nookies.get(ctx)._id_meeting)
+
+	const meeting = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/meetings/show/${_id_meeting}`,
+		{
+			headers: {
+				Authorization: 'Bearer ' + token,
+			},
+		},
+	)
+
+	const s_meeting = await meeting.json()
+
+	const user = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/users/show/${s_meeting.user.id}`,
+		{
+			headers: {
+				Authorization: 'Bearer ' + token,
+			},
+		},
+	)
+
+	const s_user = await user.json()
+
+	const category = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/categories/${s_user.id}`,
+		{
+			headers: {
+				Authorization: 'Bearer ' + token,
+			},
+		},
+	)
+
+	const s_category = await category.json()
+
+	return { props: {} }
+}
 
 const register = () => {
 	const [fields, setFields] = useState({ email: '', password: '' })

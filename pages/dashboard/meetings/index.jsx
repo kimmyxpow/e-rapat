@@ -13,8 +13,8 @@ export async function getServerSideProps(ctx) {
 	const { _id, role } = JSON.parse(nookies.get(ctx)._user)
 	const url =
 		role == 'admin'
-			? `http://127.0.0.1:1234/meetings/${_id}`
-			: `http://127.0.0.1:1234/meetings`
+			? `${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}`
+			: `${process.env.NEXT_PUBLIC_BASE_API}/meetings`
 	const meetings = await fetch(url, {
 		headers: {
 			Authorization: 'Bearer ' + token,
@@ -72,10 +72,10 @@ const index = ({ token, s_meetings, _id, role }) => {
 	const loadMeetings = async () => {
 		const url =
 			role == 'admin'
-				? `http://127.0.0.1:1234/meetings/${_id}?search=${
+				? `${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}?search=${
 						fields.search && fields.search
 				  }&date=${fields.d && fields.d}`
-				: `http://127.0.0.1:1234/meetings?search=${
+				: `${process.env.NEXT_PUBLIC_BASE_API}/meetings?search=${
 						fields.search && fields.search
 				  }&date=${fields.d && fields.d}`
 
@@ -111,14 +111,17 @@ const index = ({ token, s_meetings, _id, role }) => {
 	async function createHandler(e) {
 		e.preventDefault()
 
-		const req = await fetch(`http://127.0.0.1:1234/meetings/${_id}`, {
-			method: 'POST',
-			headers: {
-				Authorization: 'Bearer ' + token,
-				'Content-Type': 'application/json',
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}`,
+			{
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + token,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(fields),
 			},
-			body: JSON.stringify(fields),
-		})
+		)
 
 		const res = await req.json()
 
@@ -133,7 +136,7 @@ const index = ({ token, s_meetings, _id, role }) => {
 		e.preventDefault()
 
 		const req = await fetch(
-			`http://127.0.0.1:1234/meetings/${_id}/${fields._id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}/${fields._id}`,
 			{
 				method: 'PUT',
 				headers: {
@@ -157,7 +160,7 @@ const index = ({ token, s_meetings, _id, role }) => {
 		e.preventDefault()
 
 		const req = await fetch(
-			`http://127.0.0.1:1234/meetings/${_id}/${data._id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}/${data._id}`,
 			{
 				method: 'DELETE',
 				headers: {

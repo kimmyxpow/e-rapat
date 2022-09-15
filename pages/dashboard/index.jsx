@@ -11,12 +11,12 @@ export async function getServerSideProps(ctx) {
 	const { _id, role } = JSON.parse(nookies.get(ctx)._user)
 	const url =
 		role == 'admin'
-			? `http://127.0.0.1:1234/meetings/${_id}?date=${moment().format(
-					'YYYY-MM-DD',
-			  )}`
-			: `http://127.0.0.1:1234/meetings?date=${moment().format(
-					'YYYY-MM-DD',
-			  )}`
+			? `${
+					process.env.NEXT_PUBLIC_BASE_API
+			  }/meetings/${_id}?date=${moment().format('YYYY-MM-DD')}`
+			: `${
+					process.env.NEXT_PUBLIC_BASE_API
+			  }/meetings?date=${moment().format('YYYY-MM-DD')}`
 
 	const meetings = await fetch(url, {
 		headers: {
@@ -33,9 +33,9 @@ const index = ({ token, s_meetings, role }) => {
 
 	const loadMeetings = async (s = '') => {
 		const req = await fetch(
-			`http://127.0.0.1:1234/meetings?search=${s}&date=${moment().format(
-				'YYYY-MM-DD',
-			)}`,
+			`${
+				process.env.NEXT_PUBLIC_BASE_API
+			}/meetings?search=${s}&date=${moment().format('YYYY-MM-DD')}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + token,
