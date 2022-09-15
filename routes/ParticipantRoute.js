@@ -4,15 +4,19 @@ const ParticipantController = require('../app/controller/ParticipantController.j
 const authorization = require('../middlewares/authorization.js')
 const isAdmin = require('../middlewares/isAdmin.js')
 
-router.use(async (req, res, next) => {
-    const authUser = await authorization(req, res)
-    await isAdmin(req, res, authUser.id)
-    next()
-})
-
-router.get('/:meeting', ParticipantController.index)
+router.get(
+    '/:meeting',
+    async (req, res, next) => {
+        const authUser = await authorization(req, res)
+        await isAdmin(req, res, authUser.id)
+        next()
+    },
+    ParticipantController.index
+)
 
 router.post('/:meeting', ParticipantController.store)
+
+router.get('/show/:id', ParticipantController.show)
 
 router.put('/:id/in', ParticipantController.checkIn)
 

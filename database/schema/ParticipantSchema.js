@@ -35,7 +35,7 @@ const ParticipantSchema = new mongoose.Schema(
         status: {
             type: Number,
             required: true,
-            default: 0
+            default: 0,
         },
     },
     { timestamps: true }

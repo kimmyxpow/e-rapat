@@ -105,9 +105,9 @@ async function store(req, res, next) {
 
 async function show(req, res, next) {
     try {
-        const meeting = await Meeting.findById(req.params.meeting).populate(
-            'user'
-        )
+        const meeting = await Meeting.findById(req.params.meeting)
+            .populate('user')
+            .populate('category')
 
         res.json({
             meeting,

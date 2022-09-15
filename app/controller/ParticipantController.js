@@ -51,7 +51,11 @@ async function store(req, res, next) {
             meeting: req.params.meeting,
         })
 
-        return res.json({ message: 'Register success', success: true })
+        return res.json({
+            message: 'Register success',
+            participant,
+            success: true,
+        })
     } catch (err) {
         console.error('Error', err.message)
         next(err)
@@ -60,18 +64,15 @@ async function store(req, res, next) {
 
 async function checkIn(req, res, next) {
     try {
-        const checkIn = moment().format('YYYY-MM-DD HH:ss')
-        const category = await Participant.findById(req.params.id)
+        const d = new Date(),
+            h = (d.getHours() < 10 ? '0' : '') + d.getHours(),
+            m = (d.getMinutes() < 10 ? '0' : '') + d.getMinutes(),
+            checkIn = h + ':' + m
 
-        const errorBag = await Validator(req.body, {
-            meeting: ['required'],
+        await Participant.findByIdAndUpdate(req.params.id, {
+            in: checkIn,
+            status: 1,
         })
-
-        if (Object.keys(errorBag).length > 0) {
-            return res.json({ error: errorBag, success: false })
-        }
-
-        await category.updateOne({ in: checkIn })
 
         return res.json({ message: 'Check in success', success: true })
     } catch (err) {
@@ -82,20 +83,31 @@ async function checkIn(req, res, next) {
 
 async function checkOut(req, res, next) {
     try {
-        const checkOut = moment().format('YYYY-MM-DD HH:ss')
-        const category = await Participant.findById(req.params.id)
+        const d = new Date(),
+            h = (d.getHours() < 10 ? '0' : '') + d.getHours(),
+            m = (d.getMinutes() < 10 ? '0' : '') + d.getMinutes(),
+            checkOut = h + ':' + m
 
-        const errorBag = await Validator(req.body, {
-            meeting: ['required'],
+        await Participant.findByIdAndUpdate(req.params.id, {
+            out: checkOut,
+            status: 2,
         })
 
-        if (Object.keys(errorBag).length > 0) {
-            return res.json({ error: errorBag, success: false })
-        }
-
-        await category.updateOne({ out: checkOut })
-
         return res.json({ message: 'Check out success', success: true })
+    } catch (err) {
+        console.error('Error', err.message)
+        next(err)
+    }
+}
+
+async function show(req, res, next) {
+    try {
+        const participant = await Participant.findById(req.params.id)
+
+        res.json({
+            participant,
+            success: true,
+        })
     } catch (err) {
         console.error('Error', err.message)
         next(err)
@@ -107,4 +119,5 @@ module.exports = {
     store,
     checkIn,
     checkOut,
+    show,
 }
