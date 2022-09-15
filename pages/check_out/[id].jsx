@@ -3,36 +3,62 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import nookies from 'nookies'
 import { useRouter } from 'next/router'
-import { StarIcon } from '@heroicons/react/24/outline'
+import { LinkIcon, StarIcon } from '@heroicons/react/24/outline'
 import { unRegisterMeetingPage } from '@/middlewares/registerMeeting'
 
 export async function getServerSideProps(ctx) {
-	await unRegisterMeetingPage(ctx)
+	const { id } = ctx.query
+
+	const req = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/participants/show/${id}`,
+	)
+
+	if (!req.ok) ctx.res.writeHead(302, { Location: `/` }).end()
+
+	const { participant } = await req.json()
+
+	if (participant.status == 2)
+		ctx.res
+			.writeHead(302, { Location: `/success/${participant._id}` })
+			.end()
 
 	return {
-		props: {},
+		props: { id },
 	}
 }
-const Scan = () => {
+const CheckOut = ({ id }) => {
 	const router = useRouter()
 	const [status, setStatus] = useState(0)
+	const url = process.env.NEXT_PUBLIC_APP_URL + router.asPath
 
-	async function onNewScanResult(decodedText) {
-		setStatus(1)
-
+	async function loadParticipant(id) {
 		const req = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/show/${decodedText}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/participants/show/${id}`,
 		)
 
 		const res = await req.json()
 
-		if (res.meeting == null) return setStatus(2)
+		return res.participant
+	}
 
-		const { _id_meeting } = nookies.get()
-		if (_id_meeting) nookies.destroy(null, '_id_meeting')
-		nookies.set(null, '_id_meeting', decodedText)
+	async function onNewScanResult(decodedText) {
+		setStatus(1)
 
-		router.push('/register')
+		const participant = await loadParticipant(id)
+
+		if (decodedText != participant.meeting) return setStatus(2)
+
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/participants/${id}/out`,
+			{
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			},
+		)
+
+		router.push(`/success/${id}`)
 	}
 
 	return (
@@ -50,13 +76,22 @@ const Scan = () => {
 				</div>
 				<div className='text-center'>
 					<h1 className='text-3xl font-bold text-zinc-800'>
-						Silakan Scan QR
+						Check In Scan
 					</h1>
-					<Link href='/'>
-						<a className='text-zinc-600 inline-block hover:underline'>
-							Kembali ke halaman login
-						</a>
-					</Link>
+					<p className='text-zinc-600'>
+						Simpan link absensi dibawah ini agar tidak hilang
+					</p>
+				</div>
+				<div className='flex items-center'>
+					<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
+						<LinkIcon className='w-4' />
+					</div>
+					<input
+						className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
+						value={url}
+						readOnly
+						type='text'
+					/>
 				</div>
 				{status == 2 && (
 					<span className='block py-3 px-8 rounded-lg bg-red-200 text-red-600 border border-red-400 text-center'>
@@ -84,4 +119,4 @@ const Scan = () => {
 	)
 }
 
-export default Scan
+export default CheckOut

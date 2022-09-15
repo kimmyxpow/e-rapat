@@ -1,53 +1,90 @@
 import { registerMeetingPage } from '@/middlewares/registerMeeting'
-import { AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/outline'
+import {
+	AtSymbolIcon,
+	BuildingOfficeIcon,
+	LockClosedIcon,
+	PhoneIcon,
+	Square3Stack3DIcon,
+	StarIcon,
+	UserIcon,
+} from '@heroicons/react/24/outline'
 import { useState } from 'react'
+import nookies from 'nookies'
+import Router from 'next/router'
+import capitalFirst from '@/utils/capitalFirst'
 
 export async function getServerSideProps(ctx) {
 	await registerMeetingPage(ctx)
-	const _id_meeting = JSON.parse(nookies.get(ctx)._id_meeting)
+	const _id_meeting = nookies.get(ctx)._id_meeting
 
 	const meeting = await fetch(
 		`${process.env.NEXT_PUBLIC_BASE_API}/meetings/show/${_id_meeting}`,
-		{
-			headers: {
-				Authorization: 'Bearer ' + token,
-			},
-		},
 	)
 
 	const s_meeting = await meeting.json()
 
-	const user = await fetch(
-		`${process.env.NEXT_PUBLIC_BASE_API}/users/show/${s_meeting.user.id}`,
-		{
-			headers: {
-				Authorization: 'Bearer ' + token,
-			},
-		},
+	if (s_meeting.meeting == null) {
+		nookies.destroy(null, '_id_meeting')
+		ctx.res.writeHead(302, { Location: `/scan` }).end()
+	}
+
+	const categories = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/categories/${s_meeting.meeting.user._id}`,
 	)
 
-	const s_user = await user.json()
+	const s_categories = await categories.json()
 
-	const category = await fetch(
-		`${process.env.NEXT_PUBLIC_BASE_API}/categories/${s_user.id}`,
-		{
-			headers: {
-				Authorization: 'Bearer ' + token,
-			},
+	const users = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`)
+
+	const s_users = await users.json()
+
+	return {
+		props: {
+			categories: s_categories.categories,
+			users: s_users.users,
+			meeting: s_meeting.meeting,
 		},
-	)
-
-	const s_category = await category.json()
-
-	return { props: {} }
+	}
 }
 
-const register = () => {
-	const [fields, setFields] = useState({ email: '', password: '' })
+const Register = ({ categories, users, meeting }) => {
+	const [fields, setFields] = useState({ email: '', name: '', phone: '' })
+	const [errors, setErrors] = useState([])
 	const [status, setStatus] = useState(0)
 
-	function registerHandler() {
-		//
+	async function registerHandler(e) {
+		e.preventDefault()
+
+		setStatus(1)
+
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/participants/${meeting._id}`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(fields),
+			},
+		)
+
+		const res = await req.json()
+
+		if (res.success == false) {
+			setStatus(0)
+			setErrors(res.error)
+			return
+		}
+
+		nookies.destroy(null, '_id_meeting')
+
+		Router.push(`/check_in/${res.participant._id}`)
+	}
+
+	function cancelHandler() {
+		const { _id_meeting } = nookies.get()
+		if (_id_meeting) nookies.destroy(null, '_id_meeting')
+		Router.push('/scan')
 	}
 
 	function fieldHandler(e) {
@@ -62,9 +99,12 @@ const register = () => {
 	return (
 		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
 			<div className="bg-[url('/img/patterns-dark.svg')] bg-cover absolute md:left-0 md:inset-y-0 md:w-1/2 md:h-auto top-0 inset-x-0 md:inset-x-auto h-1/2 z-0"></div>
-			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
+			<div className='bg-white p-10 relative z-10 sm:w-[800px] w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
-					<img src='/img/Logo.png' />
+					<picture>
+						<source srcSet='/img/Logo.png' type='image/png' />
+						<img src='/img/Logo.png' alt='Logo' />
+					</picture>
 					<span className='font-bold text-2xl text-zinc-800'>
 						E-Rapat
 					</span>
@@ -82,7 +122,53 @@ const register = () => {
 					className='space-y-8'
 					onSubmit={registerHandler.bind(this)}
 				>
-					<div className='space-y-6'>
+					<div className='gap-6 grid sm:grid-cols-2'>
+						<div className='space-y-2'>
+							<label
+								className='font-bold text-zinc-800'
+								htmlFor='name'
+							>
+								Rapat
+							</label>
+							<div className='flex items-center'>
+								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
+									<AtSymbolIcon className='w-4' />
+								</div>
+								<input
+									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
+									placeholder='example@domain.id'
+									value={meeting.event}
+									disabled
+									type='text'
+									name='name'
+								/>
+							</div>
+						</div>
+						<div className='space-y-2'>
+							<label
+								className='font-bold text-zinc-800'
+								htmlFor='name'
+							>
+								Nama
+							</label>
+							<div className='flex items-center'>
+								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
+									<UserIcon className='w-4' />
+								</div>
+								<input
+									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
+									placeholder='Abi Noval Fauzi'
+									type='text'
+									name='name'
+									onInput={fieldHandler.bind(this)}
+								/>
+							</div>
+							{errors && errors.name ? (
+								<span className='text-sm text-red-600 font-medium inline-block'>
+									{capitalFirst(errors.name)}
+								</span>
+							) : undefined}
+						</div>
 						<div className='space-y-2'>
 							<label
 								className='font-bold text-zinc-800'
@@ -102,29 +188,108 @@ const register = () => {
 									onInput={fieldHandler.bind(this)}
 								/>
 							</div>
+							{errors && errors.email ? (
+								<span className='text-sm text-red-600 font-medium inline-block'>
+									{capitalFirst(errors.email)}
+								</span>
+							) : undefined}
 						</div>
 						<div className='space-y-2'>
 							<label
 								className='font-bold text-zinc-800'
-								htmlFor='password'
+								htmlFor='phone'
 							>
-								Password
+								Telepon
 							</label>
 							<div className='flex items-center'>
 								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
-									<LockClosedIcon className='w-4' />
+									<PhoneIcon className='w-4' />
 								</div>
 								<input
 									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
-									placeholder='********'
-									type='password'
-									name='password'
+									placeholder='+62xxxxxxxxxx'
+									type='tel'
+									name='phone'
 									onInput={fieldHandler.bind(this)}
 								/>
 							</div>
+							{errors && errors.phone ? (
+								<span className='text-sm text-red-600 font-medium inline-block'>
+									{capitalFirst(errors.phone)}
+								</span>
+							) : undefined}
+						</div>
+						<div className='space-y-2'>
+							<label
+								className='font-bold text-zinc-800'
+								htmlFor='category'
+							>
+								Kategori
+							</label>
+							<div className='flex items-center'>
+								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
+									<Square3Stack3DIcon className='w-4' />
+								</div>
+								<select
+									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
+									name='category'
+									onInput={fieldHandler.bind(this)}
+									defaultValue={''}
+								>
+									<option disabled value={''}>
+										- Pilih -
+									</option>
+									{categories.map((category) => (
+										<option
+											key={category._id}
+											value={category._id}
+										>
+											{category.name}
+										</option>
+									))}
+								</select>
+							</div>
+							{errors && errors.category ? (
+								<span className='text-sm text-red-600 font-medium inline-block'>
+									{capitalFirst(errors.category)}
+								</span>
+							) : undefined}
+						</div>
+						<div className='space-y-2'>
+							<label
+								className='font-bold text-zinc-800'
+								htmlFor='user'
+							>
+								Instansi
+							</label>
+							<div className='flex items-center'>
+								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
+									<BuildingOfficeIcon className='w-4' />
+								</div>
+								<select
+									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
+									name='user'
+									onInput={fieldHandler.bind(this)}
+									defaultValue={''}
+								>
+									<option disabled value={''}>
+										- Pilih -
+									</option>
+									{users.map((user) => (
+										<option key={user._id} value={user._id}>
+											{user.name}
+										</option>
+									))}
+								</select>
+							</div>
+							{errors && errors.user ? (
+								<span className='text-sm text-red-600 font-medium inline-block'>
+									{capitalFirst(errors.user)}
+								</span>
+							) : undefined}
 						</div>
 					</div>
-					<div className='flex flex-col items-center gap-4'>
+					<div className='flex sm:flex-row flex-col items-center gap-4'>
 						<button
 							className={`py-2 w-full px-4 ${
 								status != 1 ? 'bg-indigo-600' : 'bg-indigo-400'
@@ -139,6 +304,8 @@ const register = () => {
 						</button>
 						<span className='text-sm text-zinc-400'>Or</span>
 						<button
+							type='button'
+							onClick={cancelHandler}
 							className={`py-2 w-full px-4 bg-red-200 text-red-600 rounded font-semibold ring ring-transparent focus:ring-red-600 transition-all duration-200 inline-block text-center`}
 						>
 							Batal
@@ -153,4 +320,4 @@ const register = () => {
 	)
 }
 
-export default register
+export default Register

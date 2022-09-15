@@ -3,32 +3,31 @@ import nookies from 'nookies'
 import { authPage } from '@/middlewares/authorization'
 import React, { Fragment, useEffect, useState } from 'react'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
-import { QRCode } from 'react-qrcode-logo'
+import Link from 'next/link'
 import { Dialog, Transition } from '@headlessui/react'
 import capitalFirst from '@/utils/capitalFirst'
 
 export async function getServerSideProps(ctx) {
 	const { token } = await authPage(ctx)
 	const { _id } = JSON.parse(nookies.get(ctx)._user)
-	const users = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
-		headers: {
-			Authorization: 'Bearer ' + token,
+	const categories = await fetch(
+		`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}`,
+		{
+			headers: {
+				Authorization: 'Bearer ' + token,
+			},
 		},
-	})
-	const s_users = await users.json()
+	)
+	const s_categories = await categories.json()
 
-	return { props: { token, s_users: s_users.users, _id } }
+	return { props: { token, s_categories: s_categories.categories, _id } }
 }
 
-const index = ({ token, s_users, _id }) => {
-	const [users, setUsers] = useState(s_users)
+const Categories = ({ token, s_categories, _id }) => {
+	const [categories, setCategories] = useState(s_categories)
 	const [fields, setFields] = useState({
 		search: '',
-		d: '',
-		email: '',
-		password: '',
 		name: '',
-		address: '',
 		_id: '',
 	})
 	const [isOpenCreate, setIsOpenCreate] = useState(false)
@@ -39,7 +38,7 @@ const index = ({ token, s_users, _id }) => {
 	function closeModalCreate() {
 		setIsOpenCreate(false)
 		setErrors({})
-		setFields({ ...fields, email: '', password: '', name: '', address: '' })
+		setFields({ ...fields, name: '' })
 	}
 
 	function openModalCreate() {
@@ -51,22 +50,21 @@ const index = ({ token, s_users, _id }) => {
 		setErrors({})
 		setFields({
 			...fields,
-			email: '',
-			password: '',
 			name: '',
-			address: '',
 			_id: '',
 		})
 	}
 
 	function openModalEdit(data, e) {
-		setFields({ ...fields, ...data, password: '' })
+		setFields({ ...fields, ...data })
 		setIsOpenEdit(true)
 	}
 
-	const loadUsers = async () => {
+	const loadCategories = async () => {
 		const req = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_API}/users/?search=${fields.search}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}?search=${
+				fields.search && fields.search
+			}`,
 			{
 				headers: {
 					Authorization: 'Bearer ' + token,
@@ -76,7 +74,7 @@ const index = ({ token, s_users, _id }) => {
 
 		const res = await req.json()
 
-		setUsers(res.users)
+		setCategories(res.categories)
 	}
 
 	function fieldHandler(e) {
@@ -91,21 +89,24 @@ const index = ({ token, s_users, _id }) => {
 	async function createHandler(e) {
 		e.preventDefault()
 
-		const req = await fetch(`${process.env.NEXT_PUBLIC_BASE_API}/users`, {
-			method: 'POST',
-			headers: {
-				Authorization: 'Bearer ' + token,
-				'Content-Type': 'application/json',
+		const req = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}`,
+			{
+				method: 'POST',
+				headers: {
+					Authorization: 'Bearer ' + token,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(fields),
 			},
-			body: JSON.stringify(fields),
-		})
+		)
 
 		const res = await req.json()
 
 		if (!res.success) return setErrors(res.error)
 
 		setSuccess(res)
-		loadUsers()
+		loadCategories()
 		closeModalCreate()
 	}
 
@@ -113,7 +114,7 @@ const index = ({ token, s_users, _id }) => {
 		e.preventDefault()
 
 		const req = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_API}/users/${fields._id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}/${fields._id}`,
 			{
 				method: 'PUT',
 				headers: {
@@ -129,7 +130,7 @@ const index = ({ token, s_users, _id }) => {
 		if (!res.success) return setErrors(res.error)
 
 		setSuccess(res)
-		loadUsers()
+		loadCategories()
 		closeModalEdit()
 	}
 
@@ -137,7 +138,7 @@ const index = ({ token, s_users, _id }) => {
 		e.preventDefault()
 
 		const req = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_API}/users/${data._id}`,
+			`${process.env.NEXT_PUBLIC_BASE_API}/categories/${_id}/${data._id}`,
 			{
 				method: 'DELETE',
 				headers: {
@@ -152,15 +153,15 @@ const index = ({ token, s_users, _id }) => {
 		if (!res.success) return setErrors(res.error)
 
 		setSuccess(res)
-		loadUsers()
+		loadCategories()
 	}
 
 	useEffect(() => {
-		loadUsers()
+		loadCategories()
 	}, [fields])
 
 	return (
-		<Layout title='Rapat'>
+		<Layout title='Kategori Peserta'>
 			<div className='space-y-4'>
 				<div className='flex justify-between items-center flex-wrap gap-x-2 gap-y-4'>
 					<div className='flex gap-2 flex-wrap sm:w-auto w-full'>
@@ -169,7 +170,7 @@ const index = ({ token, s_users, _id }) => {
 							<input
 								className='focus:outline-none py-2.5 bg-transparent text-zinc-600'
 								type='text'
-								placeholder='Cari user...'
+								placeholder='Cari kategori...'
 								name='search'
 								onInput={fieldHandler.bind(this)}
 							/>
@@ -191,26 +192,22 @@ const index = ({ token, s_users, _id }) => {
 					<table>
 						<thead>
 							<tr>
-								<th className='!text-left'>Nama</th>
-								<th>Email</th>
-								<th>Alamat</th>
+								<th>#</th>
+								<th>Name</th>
 								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							{users.length > 0 ? (
-								users.map((user) => (
-									<tr key={user._id}>
-										<td className='!text-left'>
-											{user.name}
-										</td>
-										<td>{user.email}</td>
-										<td>{user.address}</td>
+							{categories.length > 0 ? (
+								categories.map((category, i) => (
+									<tr key={category._id}>
+										<td>{i + 1}</td>
+										<td>{category.name}</td>
 										<td className='space-x-2'>
 											<button
 												onClick={openModalEdit.bind(
 													this,
-													user,
+													category,
 												)}
 												className={`py-2 px-6 bg-orange-600 rounded-md text-white font-semibold ring ring-transparent focus:ring-orange-400 transition-all duration-200 inline-block`}
 											>
@@ -219,7 +216,7 @@ const index = ({ token, s_users, _id }) => {
 											<button
 												onClick={deleteHandler.bind(
 													this,
-													user,
+													category,
 												)}
 												className={`py-2 px-6 bg-red-600 rounded-md text-white font-semibold ring ring-transparent focus:ring-red-400 transition-all duration-200 inline-block`}
 											>
@@ -273,7 +270,7 @@ const index = ({ token, s_users, _id }) => {
 										as='h3'
 										className='text-xl font-bold text-zinc-800'
 									>
-										Create User
+										Create Kategori Peserta
 									</Dialog.Title>
 
 									<form
@@ -285,9 +282,9 @@ const index = ({ token, s_users, _id }) => {
 											<div className='grid gap-2'>
 												<label
 													className='font-semibold text-zinc-600'
-													htmlFor='event'
+													htmlFor='name'
 												>
-													Nama
+													Nama Kategori
 												</label>
 												<input
 													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
@@ -303,81 +300,6 @@ const index = ({ token, s_users, _id }) => {
 													<span className='text-sm text-red-600 font-medium capitalize'>
 														{capitalFirst(
 															errors.name,
-														)}
-													</span>
-												) : undefined}
-											</div>
-											<div className='grid gap-2'>
-												<label
-													className='font-semibold text-zinc-600'
-													htmlFor='email'
-												>
-													Email
-												</label>
-												<input
-													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
-													type='email'
-													name='email'
-													onChange={fieldHandler.bind(
-														this,
-													)}
-													placeholder='Ketik disini...'
-													id='email'
-												/>
-												{errors && errors.email ? (
-													<span className='text-sm text-red-600 font-medium capitalize'>
-														{capitalFirst(
-															errors.email,
-														)}
-													</span>
-												) : undefined}
-											</div>
-											<div className='grid gap-2'>
-												<label
-													className='font-semibold text-zinc-600'
-													htmlFor='password'
-												>
-													Password
-												</label>
-												<input
-													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
-													type='password'
-													name='password'
-													onChange={fieldHandler.bind(
-														this,
-													)}
-													placeholder='Ketik disini...'
-													id='password'
-												/>
-												{errors && errors.password ? (
-													<span className='text-sm text-red-600 font-medium capitalize'>
-														{capitalFirst(
-															errors.password,
-														)}
-													</span>
-												) : undefined}
-											</div>
-											<div className='grid gap-2'>
-												<label
-													className='font-semibold text-zinc-600'
-													htmlFor='address'
-												>
-													address
-												</label>
-												<input
-													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
-													type='text'
-													name='address'
-													id='address'
-													onInput={fieldHandler.bind(
-														this,
-													)}
-													placeholder='Ketik disini...'
-												/>
-												{errors && errors.address ? (
-													<span className='text-sm text-red-600 font-medium capitalize'>
-														{capitalFirst(
-															errors.address,
 														)}
 													</span>
 												) : undefined}
@@ -440,7 +362,7 @@ const index = ({ token, s_users, _id }) => {
 										as='h3'
 										className='text-xl font-bold text-zinc-800'
 									>
-										Edit User
+										Edit Kategori Peserta
 									</Dialog.Title>
 
 									<form
@@ -452,9 +374,9 @@ const index = ({ token, s_users, _id }) => {
 											<div className='grid gap-2'>
 												<label
 													className='font-semibold text-zinc-600'
-													htmlFor='event'
+													htmlFor='name'
 												>
-													Nama
+													Nama Kategori
 												</label>
 												<input
 													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
@@ -471,82 +393,6 @@ const index = ({ token, s_users, _id }) => {
 													<span className='text-sm text-red-600 font-medium capitalize'>
 														{capitalFirst(
 															errors.name,
-														)}
-													</span>
-												) : undefined}
-											</div>
-											<div className='grid gap-2'>
-												<label
-													className='font-semibold text-zinc-600'
-													htmlFor='email'
-												>
-													Email
-												</label>
-												<input
-													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
-													type='email'
-													name='email'
-													onChange={fieldHandler.bind(
-														this,
-													)}
-													value={fields.email}
-													id='email'
-												/>
-												{errors && errors.email ? (
-													<span className='text-sm text-red-600 font-medium capitalize'>
-														{capitalFirst(
-															errors.email,
-														)}
-													</span>
-												) : undefined}
-											</div>
-											<div className='grid gap-2'>
-												<label
-													className='font-semibold text-zinc-600'
-													htmlFor='password'
-												>
-													Password
-												</label>
-												<input
-													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
-													type='password'
-													name='password'
-													onChange={fieldHandler.bind(
-														this,
-													)}
-													value={fields.password}
-													id='password'
-												/>
-												{errors && errors.password ? (
-													<span className='text-sm text-red-600 font-medium capitalize'>
-														{capitalFirst(
-															errors.password,
-														)}
-													</span>
-												) : undefined}
-											</div>
-											<div className='grid gap-2'>
-												<label
-													className='font-semibold text-zinc-600'
-													htmlFor='address'
-												>
-													address
-												</label>
-												<input
-													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
-													type='text'
-													name='address'
-													id='address'
-													onInput={fieldHandler.bind(
-														this,
-													)}
-													value={fields.address}
-													placeholder='Ketik disini...'
-												/>
-												{errors && errors.address ? (
-													<span className='text-sm text-red-600 font-medium capitalize'>
-														{capitalFirst(
-															errors.address,
 														)}
 													</span>
 												) : undefined}
@@ -577,4 +423,4 @@ const index = ({ token, s_users, _id }) => {
 	)
 }
 
-export default index
+export default Categories

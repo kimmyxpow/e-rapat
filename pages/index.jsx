@@ -15,22 +15,26 @@ export async function getServerSideProps(ctx) {
 	return { props: {} }
 }
 
-export default function Home() {
+export default function Home({}) {
 	const [fields, setFields] = useState({ email: '', password: '' })
 	const [status, setStatus] = useState(0)
+	const _id_meeting = nookies.get()._id_meeting
 
 	async function loginHandler(e) {
 		e.preventDefault()
 
 		setStatus(1)
 
-		const loginReq = await fetch(`http://localhost:1234/auth/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
+		const loginReq = await fetch(
+			`${process.env.NEXT_PUBLIC_BASE_API}/auth/login`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(fields),
 			},
-			body: JSON.stringify(fields),
-		})
+		)
 
 		const loginRes = await loginReq.json()
 
@@ -56,7 +60,10 @@ export default function Home() {
 			<div className="bg-[url('/img/patterns-dark.svg')] bg-cover absolute md:left-0 md:inset-y-0 md:w-1/2 md:h-auto top-0 inset-x-0 md:inset-x-auto h-1/2 z-0"></div>
 			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
-					<img src='/img/Logo.png' />
+					<picture>
+						<source srcSet='/img/Logo.png' type='image/png' />
+						<img src='/img/Logo.png' alt='Logo' />
+					</picture>
 					<span className='font-bold text-2xl text-zinc-800'>
 						E-Rapat
 					</span>
@@ -135,7 +142,7 @@ export default function Home() {
 							)}
 						</button>
 						<span className='text-sm text-zinc-400'>Or</span>
-						<Link href='/scan'>
+						<Link href={_id_meeting ? '/register' : 'scan'}>
 							<a
 								className={`py-2 w-full px-4 bg-indigo-200 text-indigo-600 rounded font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 inline-block text-center`}
 							>

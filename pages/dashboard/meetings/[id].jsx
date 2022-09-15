@@ -19,7 +19,7 @@ export async function getServerSideProps(ctx) {
 	return { props: { token, s_participants: s_participants.participants, id } }
 }
 
-const index = ({ token, s_participants, id }) => {
+const Participants = ({ token, s_participants, id }) => {
 	const [participants, setParticipants] = useState(s_participants)
 	const [fields, setFields] = useState({
 		search: '',
@@ -111,4 +111,4 @@ const index = ({ token, s_participants, id }) => {
 	)
 }
 
-export default index
+export default Participants

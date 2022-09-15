@@ -25,23 +25,23 @@ export async function getServerSideProps(ctx) {
 	})
 	const s_meetings = await meetings.json()
 
-	return { props: { token, s_meetings: s_meetings.meetings, role } }
+	return { props: { token, s_meetings: s_meetings.meetings, role, _id } }
 }
 
-const index = ({ token, s_meetings, role }) => {
+const Index = ({ token, s_meetings, role, _id }) => {
 	const [meetings, setMeetings] = useState(s_meetings)
 
 	const loadMeetings = async (s = '') => {
-		const req = await fetch(
-			`${
-				process.env.NEXT_PUBLIC_BASE_API
-			}/meetings?search=${s}&date=${moment().format('YYYY-MM-DD')}`,
-			{
-				headers: {
-					Authorization: 'Bearer ' + token,
-				},
+		const url =
+			role == 'admin'
+				? `${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}?search=${s}`
+				: `${process.env.NEXT_PUBLIC_BASE_API}/meetings?search=${s}`
+
+		const req = await fetch(url, {
+			headers: {
+				Authorization: 'Bearer ' + token,
 			},
-		)
+		})
 
 		const res = await req.json()
 
@@ -154,4 +154,4 @@ const index = ({ token, s_meetings, role }) => {
 	)
 }
 
-export default index
+export default Index

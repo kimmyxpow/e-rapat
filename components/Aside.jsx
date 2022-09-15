@@ -52,7 +52,10 @@ const Aside = () => {
 				</button>
 				<div className='space-y-8'>
 					<div className='flex items-center gap-2'>
-						<img src='/img/Logo.png' />
+						<picture>
+							<source srcSet='/img/Logo.png' type='image/png' />
+							<img src='/img/Logo.png' alt='Logo' />
+						</picture>
 						<span className='font-bold text-2xl text-zinc-800'>
 							E-Rapat
 						</span>
@@ -125,16 +128,6 @@ const Aside = () => {
 				</div>
 			</div>
 			<div className='flex gap-1'>
-				<Link href='#'>
-					<a className='h-10 w-10 rounded-full bg-zinc-800 text-white grid place-items-center hover:bg-zinc-900 focus:bg-zinc-900 transition-all duration-200'>
-						<Cog8ToothIcon className='w-5' />
-					</a>
-				</Link>
-				<Link href='#'>
-					<a className='h-10 w-10 rounded-full bg-zinc-800 text-white grid place-items-center hover:bg-zinc-900 focus:bg-zinc-900 transition-all duration-200'>
-						<InformationCircleIcon className='w-5' />
-					</a>
-				</Link>
 				<button
 					onClick={logoutHandler.bind(this)}
 					className='h-10 w-10 rounded-full bg-red-600 text-white grid place-items-center hover:bg-red-700 focus:bg-red-700 transition-all duration-200'
