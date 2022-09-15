@@ -20,4 +20,29 @@
     .table table tbody td {
         @apply text-center whitespace-nowrap text-sm text-zinc-600 border-b border-zinc-100 px-4 py-4;
     }
+
+    #html5qr-code-full-region__scan_region {
+        @apply flex justify-center;
+    }
+
+    #html5qr-code-full-region__scan_region video {
+        @apply rounded-lg;
+        transform: rotateY(180deg);
+}
+
+    #html5qr-code-full-region {
+        @apply !border-none;
+    }
+
+    #html5qr-code-full-region__dashboard_section {
+        @apply space-y-4;
+    }
+
+    #html5qr-code-full-region__dashboard_section_csr {
+        @apply py-2 w-full px-4 bg-indigo-600 rounded text-white font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 !no-underline cursor-pointer;
+    }
+
+    #html5qr-code-full-region__dashboard_section_swaplink {
+        @apply py-2 w-full px-4 bg-indigo-200 text-indigo-600 rounded font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 inline-block text-center !no-underline cursor-pointer;
+    }
 }

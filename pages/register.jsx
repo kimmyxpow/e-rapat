@@ -1,45 +1,12 @@
-import { unauthPage } from '@/middlewares/authorization'
-import {
-	AtSymbolIcon,
-	LockClosedIcon,
-	StarIcon,
-} from '@heroicons/react/24/outline'
+import { AtSymbolIcon, LockClosedIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import Router from 'next/router'
-import nookies from 'nookies'
-import Link from 'next/link'
 
-export async function getServerSideProps(ctx) {
-	await unauthPage(ctx)
-
-	return { props: {} }
-}
-
-export default function Home() {
+const register = () => {
 	const [fields, setFields] = useState({ email: '', password: '' })
 	const [status, setStatus] = useState(0)
 
-	async function loginHandler(e) {
-		e.preventDefault()
-
-		setStatus(1)
-
-		const loginReq = await fetch(`http://localhost:1234/auth/login`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(fields),
-		})
-
-		const loginRes = await loginReq.json()
-
-		if (loginRes.success == false) return setStatus(2)
-
-		nookies.set(null, '_token', loginRes.token)
-		nookies.set(null, '_user', JSON.stringify(loginRes.user))
-
-		Router.push('/dashboard')
+	function registerHandler() {
+		//
 	}
 
 	function fieldHandler(e) {
@@ -63,21 +30,16 @@ export default function Home() {
 				</div>
 				<div className='text-center'>
 					<h1 className='text-3xl font-bold text-zinc-800'>
-						Hello Again!
+						Silakan Isi Data Diri
 					</h1>
-					<p className='text-zinc-600'>
-						Welcome back! Please enter your detail.
-					</p>
+					{/* <p className='text-zinc-600'>
+
+					</p> */}
 				</div>
-				{status === 2 && (
-					<span className='block py-3 px-8 rounded-lg bg-red-200 text-red-600 border border-red-400 text-center'>
-						Login Failed
-					</span>
-				)}
 				<form
 					action='#'
 					className='space-y-8'
-					onSubmit={loginHandler.bind(this)}
+					onSubmit={registerHandler.bind(this)}
 				>
 					<div className='space-y-6'>
 						<div className='space-y-2'>
@@ -129,19 +91,17 @@ export default function Home() {
 							disabled={status != 1 ? false : true}
 						>
 							{status != 1 ? (
-								'Login'
+								'Register'
 							) : (
 								<StarIcon className='w-6 animate-spin mx-auto' />
 							)}
 						</button>
 						<span className='text-sm text-zinc-400'>Or</span>
-						<Link href='/scan'>
-							<a
-								className={`py-2 w-full px-4 bg-indigo-200 text-indigo-600 rounded font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 inline-block text-center`}
-							>
-								Scan Qr
-							</a>
-						</Link>
+						<button
+							className={`py-2 w-full px-4 bg-red-200 text-red-600 rounded font-semibold ring ring-transparent focus:ring-red-600 transition-all duration-200 inline-block text-center`}
+						>
+							Batal
+						</button>
 					</div>
 				</form>
 			</div>
@@ -151,3 +111,5 @@ export default function Home() {
 		</div>
 	)
 }
+
+export default register

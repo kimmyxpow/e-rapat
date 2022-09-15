@@ -245,10 +245,10 @@ const index = ({ token, s_meetings, _id, role }) => {
 											>
 												<QRCode
 													enableCORS={true}
-													size='50'
+													size='150'
 													logoImage='/img/lskk.png'
 													value={meeting._id}
-													logoWidth='30'
+													logoWidth='60'
 													eyeRadius={[
 														{
 															outer: [
