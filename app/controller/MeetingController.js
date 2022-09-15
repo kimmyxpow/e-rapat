@@ -103,6 +103,22 @@ async function store(req, res, next) {
     }
 }
 
+async function show(req, res, next) {
+    try {
+        const meeting = await Meeting.findById(req.params.meeting).populate(
+            'user'
+        )
+
+        res.json({
+            meeting,
+            success: true,
+        })
+    } catch (err) {
+        console.error('Error', err.message)
+        next(err)
+    }
+}
+
 async function update(req, res, next) {
     try {
         const payload = req.body
@@ -151,4 +167,5 @@ module.exports = {
     destroy,
     all,
     participants,
+    show,
 }

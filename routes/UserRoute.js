@@ -12,6 +12,8 @@ router.use(async (req, res, next) => {
 
 router.get('/', UserController.index)
 
+router.get('/show/:user', UserController.show)
+
 router.post('/', UserController.store)
 
 router.put('/:id', UserController.update)

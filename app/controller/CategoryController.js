@@ -10,7 +10,7 @@ async function index(req, res, next) {
         if (search) categories.find({ name: { $regex: search, $options: 'i' } })
 
         res.json({
-            categories: await categories.sort({ name: 'asc' }),
+            categories: await categories.populate('user').sort({ name: 'asc' }),
             success: true,
         })
     } catch (err) {
@@ -31,9 +31,16 @@ async function store(req, res, next) {
             return res.json({ error: errorBag, success: false })
         }
 
-        await Category.create({...payload, _id: new Types.ObjectId(), user: req.params.institute})
+        await Category.create({
+            ...payload,
+            _id: new Types.ObjectId(),
+            user: req.params.institute,
+        })
 
-        return res.json({ message: 'Category created successfuly', success: true })
+        return res.json({
+            message: 'Category created successfuly',
+            success: true,
+        })
     } catch (err) {
         console.error('Error', err.message)
         next(err)
@@ -55,7 +62,10 @@ async function update(req, res, next) {
 
         await category.updateOne(payload)
 
-        return res.json({ message: 'Category updated successfuly', success: true })
+        return res.json({
+            message: 'Category updated successfuly',
+            success: true,
+        })
     } catch (err) {
         console.error('Error', err.message)
         next(err)
@@ -65,7 +75,10 @@ async function update(req, res, next) {
 async function destroy(req, res, next) {
     try {
         await Category.findByIdAndDelete(req.params.id)
-        return res.json({ message: 'Category deleted successfuly', success: true })
+        return res.json({
+            message: 'Category deleted successfuly',
+            success: true,
+        })
     } catch (err) {
         console.error('Error', err.message)
         next(err)

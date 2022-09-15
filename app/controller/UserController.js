@@ -86,6 +86,20 @@ async function update(req, res, next) {
     }
 }
 
+async function show(req, res, next) {
+    try {
+        const user = await User.findById(req.params.user)
+
+        res.json({
+            user,
+            success: true,
+        })
+    } catch (err) {
+        console.error('Error', err.message)
+        next(err)
+    }
+}
+
 async function destroy(req, res, next) {
     try {
         await User.findByIdAndDelete(req.params.id)
@@ -101,4 +115,5 @@ module.exports = {
     store,
     update,
     destroy,
+    show,
 }

@@ -35,6 +35,8 @@ router.get(
     MeetingController.index
 )
 
+router.get('/show/:meeting', MeetingController.show)
+
 router.post(
     '/:institute/',
     async (req, res, next) => {
