@@ -15,15 +15,7 @@ router.get(
     MeetingController.all
 )
 
-router.get(
-    '/participants/:meeting',
-    async (req, res, next) => {
-        const authUser = await authorization(req, res)
-        await isSuperAdmin(req, res, authUser.id)
-        next()
-    },
-    MeetingController.participants
-)
+router.get('/participants/:meeting', MeetingController.participants)
 
 router.get(
     '/:institute',

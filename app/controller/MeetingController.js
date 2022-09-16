@@ -27,7 +27,9 @@ async function all(req, res, next) {
 async function participants(req, res, next) {
     try {
         const { search, institute } = req.query
-        const participants = Participant.find()
+        const participants = Participant.find({
+            meeting: req.params.meeting,
+        })
 
         if (search)
             participants.find({
@@ -105,9 +107,9 @@ async function store(req, res, next) {
 
 async function show(req, res, next) {
     try {
-        const meeting = await Meeting.findById(req.params.meeting)
-            .populate('user')
-            .populate('category')
+        const meeting = await Meeting.findById(req.params.meeting).populate(
+            'user'
+        )
 
         res.json({
             meeting,
