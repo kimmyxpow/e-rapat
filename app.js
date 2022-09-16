@@ -10,8 +10,18 @@ const meetingRoute = require('./routes/MeetingRoute')
 const participantRoute = require('./routes/ParticipantRoute')
 const categoryRoute = require('./routes/CategoryRoute')
 const authRoute = require('./routes/AuthRoute')
+const https = require(`https`)
+const fs = require(`fs`)
 
 require('./database/connection')
+
+const credentials = {
+    pfx: fs.readFileSync(process.env.pfx),
+    passphrase: process.env.passphrase,
+    ca: fs.readFileSync(process.env.ca),
+}
+
+const server = https.createServer(credentials, app)
 
 app.use(cors())
 
@@ -20,6 +30,7 @@ app.use(
         extended: true,
     })
 )
+
 app.use(bodyParser.json())
 
 app.use(
