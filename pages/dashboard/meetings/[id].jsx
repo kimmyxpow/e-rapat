@@ -8,11 +8,6 @@ export async function getServerSideProps(ctx) {
 	const { id } = ctx.query
 	const participants = await fetch(
 		`${process.env.NEXT_PUBLIC_BASE_API}/meetings/participants/${id}`,
-		{
-			headers: {
-				Authorization: 'Bearer ' + token,
-			},
-		},
 	)
 	const s_participants = await participants.json()
 
@@ -28,11 +23,6 @@ const Participants = ({ token, s_participants, id }) => {
 	const loadParticipants = async () => {
 		const req = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/participants/${id}?search=${fields.search}`,
-			{
-				headers: {
-					Authorization: 'Bearer ' + token,
-				},
-			},
 		)
 
 		const res = await req.json()

@@ -291,7 +291,16 @@ const Index = ({ token, s_meetings, _id, role }) => {
 											<td>{meeting.user.name}</td>
 										)}
 										<td className='space-x-2'>
-											{role == 'admin' ? (
+											<Link
+												href={`/dashboard/meetings/${meeting._id}`}
+											>
+												<a
+													className={`py-2 px-6 bg-indigo-600 rounded-md text-white font-semibold ring ring-transparent focus:ring-indigo-400 transition-all duration-200 inline-block`}
+												>
+													Lihat Peserta
+												</a>
+											</Link>
+											{role == 'admin' && (
 												<>
 													<button
 														onClick={openModalEdit.bind(
@@ -312,16 +321,6 @@ const Index = ({ token, s_meetings, _id, role }) => {
 														Delete
 													</button>
 												</>
-											) : (
-												<Link
-													href={`/dashboard/meetings/${meeting._id}`}
-												>
-													<a
-														className={`py-2 px-6 bg-indigo-600 rounded-md text-white font-semibold ring ring-transparent focus:ring-indigo-400 transition-all duration-200 inline-block`}
-													>
-														Lihat Peserta
-													</a>
-												</Link>
 											)}
 										</td>
 									</tr>

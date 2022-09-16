@@ -76,7 +76,7 @@ const CheckOut = ({ id }) => {
 				</div>
 				<div className='text-center'>
 					<h1 className='text-3xl font-bold text-zinc-800'>
-						Check In Scan
+						Check Out Scan
 					</h1>
 					<p className='text-zinc-600'>
 						Simpan link absensi dibawah ini agar tidak hilang
