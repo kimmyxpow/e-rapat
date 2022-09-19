@@ -28,6 +28,7 @@ const Aside = () => {
 	const logoutHandler = () => {
 		nookies.destroy(null, '_token')
 		nookies.destroy(null, '_user')
+
 		Router.push('/')
 	}
 

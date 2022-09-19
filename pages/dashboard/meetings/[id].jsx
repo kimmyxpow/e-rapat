@@ -65,10 +65,7 @@ const Participants = ({ token, s_participants, id }) => {
 						<thead>
 							<tr>
 								<th className='!text-left'>Name</th>
-								<th>Email</th>
-								<th>Phone</th>
 								<th>Instansi</th>
-								<th>Kategori</th>
 								<th>Check In</th>
 								<th>Check Out</th>
 								<th>Status</th>
@@ -79,10 +76,7 @@ const Participants = ({ token, s_participants, id }) => {
 								participants.map((participant) => (
 									<tr key={participant._id}>
 										<td>{participant.name}</td>
-										<td>{participant.email}</td>
-										<td>{participant.phone}</td>
-										<td>{participant.user.name}</td>
-										<td>{participant.category.name}</td>
+										<td>{participant.institute}</td>
 										<td>{participant.in || '-'}</td>
 										<td>{participant.out || '-'}</td>
 										<td>{participant.status}</td>

@@ -99,7 +99,7 @@ const Register = ({ categories, users, meeting }) => {
 	return (
 		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
 			<div className="bg-[url('/img/patterns-dark.svg')] bg-cover absolute md:left-0 md:inset-y-0 md:w-1/2 md:h-auto top-0 inset-x-0 md:inset-x-auto h-1/2 z-0"></div>
-			<div className='bg-white p-10 relative z-10 sm:w-[800px] w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
+			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
 						<source srcSet='/img/Logo.png' type='image/png' />
@@ -122,7 +122,7 @@ const Register = ({ categories, users, meeting }) => {
 					className='space-y-8'
 					onSubmit={registerHandler.bind(this)}
 				>
-					<div className='gap-6 grid sm:grid-cols-2'>
+					<div className='space-y-6'>
 						<div className='space-y-2'>
 							<label
 								className='font-bold text-zinc-800'
@@ -160,6 +160,7 @@ const Register = ({ categories, users, meeting }) => {
 									placeholder='Abi Noval Fauzi'
 									type='text'
 									name='name'
+									id='name'
 									onInput={fieldHandler.bind(this)}
 								/>
 							</div>
@@ -169,7 +170,7 @@ const Register = ({ categories, users, meeting }) => {
 								</span>
 							) : undefined}
 						</div>
-						<div className='space-y-2'>
+						{/* <div className='space-y-2'>
 							<label
 								className='font-bold text-zinc-800'
 								htmlFor='email'
@@ -285,6 +286,32 @@ const Register = ({ categories, users, meeting }) => {
 							{errors && errors.user ? (
 								<span className='text-sm text-red-600 font-medium inline-block'>
 									{capitalFirst(errors.user)}
+								</span>
+							) : undefined}
+						</div> */}
+						<div className='space-y-2'>
+							<label
+								className='font-bold text-zinc-800'
+								htmlFor='institute'
+							>
+								Instansi
+							</label>
+							<div className='flex items-center'>
+								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
+									<BuildingOfficeIcon className='w-4' />
+								</div>
+								<input
+									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
+									placeholder='SMK Wikrama Bogor'
+									type='text'
+									name='institute'
+									id='institute'
+									onInput={fieldHandler.bind(this)}
+								/>
+							</div>
+							{errors && errors.institute ? (
+								<span className='text-sm text-red-600 font-medium inline-block'>
+									{capitalFirst(errors.institute)}
 								</span>
 							) : undefined}
 						</div>

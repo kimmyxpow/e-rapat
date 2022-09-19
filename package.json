@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node services.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node services.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -13,6 +13,8 @@
     "@heroicons/react": "^2.0.11",
     "@nuintun/qrcode": "^3.3.0",
     "css-loader": "^6.7.1",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
     "html5-qrcode": "^2.2.1",
     "loader-utils": "^3.2.0",
     "moment": "^2.29.4",

@@ -34,8 +34,14 @@ const Index = ({ token, s_meetings, role, _id }) => {
 	const loadMeetings = async (s = '') => {
 		const url =
 			role == 'admin'
-				? `${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}?search=${s}`
-				: `${process.env.NEXT_PUBLIC_BASE_API}/meetings?search=${s}`
+				? `${
+						process.env.NEXT_PUBLIC_BASE_API
+				  }/meetings/${_id}?search=${s}&date=${moment().format(
+						'YYYY-MM-DD',
+				  )}`
+				: `${
+						process.env.NEXT_PUBLIC_BASE_API
+				  }/meetings?search=${s}&date=${moment().format('YYYY-MM-DD')}`
 
 		const req = await fetch(url, {
 			headers: {

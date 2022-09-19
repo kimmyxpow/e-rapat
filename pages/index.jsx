@@ -40,6 +40,9 @@ export default function Home({}) {
 
 		if (loginRes.success == false) return setStatus(2)
 
+		nookies.destroy(null, '_token')
+		nookies.destroy(null, '_user')
+
 		nookies.set(null, '_token', loginRes.token)
 		nookies.set(null, '_user', JSON.stringify(loginRes.user))
 
