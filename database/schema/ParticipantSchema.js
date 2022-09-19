@@ -6,23 +6,11 @@ const ParticipantSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Meeting',
         },
-        user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-        },
-        category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Category',
-        },
         name: {
             type: String,
             required: true,
         },
-        email: {
-            type: String,
-            required: true,
-        },
-        phone: {
+        institute: {
             type: String,
             required: true,
         },

@@ -35,11 +35,8 @@ async function store(req, res, next) {
         const payload = req.body
 
         const errorBag = await Validator(payload, {
-            category: ['required'],
-            user: ['required'],
             name: ['required', 'min:3'],
-            email: ['required', 'email'],
-            phone: ['required', 'phone'],
+            institute: ['required', 'min:3'],
         })
 
         if (Object.keys(errorBag).length > 0) {

@@ -11,17 +11,17 @@ const participantRoute = require('./routes/ParticipantRoute')
 const categoryRoute = require('./routes/CategoryRoute')
 const authRoute = require('./routes/AuthRoute')
 const https = require(`https`)
-const fs = require(`fs`)
+const { readFileSync } = require(`fs`)
 
 require('./database/connection')
 
 const credentials = {
-    pfx: fs.readFileSync(process.env.pfx),
-    passphrase: process.env.passphrase,
-    ca: fs.readFileSync(process.env.ca),
+    pfx: readFileSync(process.env.PFX_FILE),
+    passphrase: process.env.PFX_PASSPHRASE,
+    ca: readFileSync(process.env.INTERCERT_FILE),
 }
 
-const server = https.createServer(credentials, app)
+https.createServer(credentials, app)
 
 app.use(cors())
 

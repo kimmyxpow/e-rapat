@@ -26,7 +26,7 @@ async function all(req, res, next) {
 
 async function participants(req, res, next) {
     try {
-        const { search, institute } = req.query
+        const { search } = req.query
         const participants = Participant.find({
             meeting: req.params.meeting,
         })
@@ -34,17 +34,10 @@ async function participants(req, res, next) {
         if (search)
             participants.find({
                 name: { $regex: search, $options: 'i' },
-                email: { $regex: search, $options: 'i' },
-                phone: { $regex: search, $options: 'i' },
             })
-        if (institute) participants.where({ user: institute })
 
         res.json({
-            participants: await participants
-                .populate('meeting')
-                .populate('user')
-                .populate('category')
-                .sort({ name: 'asc' }),
+            participants: await participants.sort({ name: 'asc' }),
             success: true,
         })
     } catch (err) {
