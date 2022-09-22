@@ -11,6 +11,7 @@ const participantRoute = require('./routes/ParticipantRoute')
 const categoryRoute = require('./routes/CategoryRoute')
 const authRoute = require('./routes/AuthRoute')
 const https = require(`https`)
+const fileUpload = require('express-fileupload')
 const { readFileSync } = require(`fs`)
 
 require('./database/connection')
@@ -25,19 +26,12 @@ https.createServer(credentials, app)
 
 app.use(cors())
 
-app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
-)
-
 app.use(bodyParser.json())
 
-app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    })
-)
+app.use(bodyParser.urlencoded({ extended: true }))
+
+app.use(fileUpload())
+app.use(express.static('public'))
 
 app.get('/', (req, res) => {
     res.json({ message: 'ok' })

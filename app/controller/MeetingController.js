@@ -2,6 +2,8 @@ const { Types } = require('mongoose')
 const Meeting = require('../../app/model/Meeting.js')
 const Participant = require('../../app/model/Participant.js')
 const Validator = require('../utility/Validator.js')
+const UploadFile = require('../utility/UploadFile.js')
+const fs = require('fs')
 
 async function all(req, res, next) {
     try {
@@ -71,21 +73,30 @@ async function store(req, res, next) {
     try {
         const payload = req.body
 
-        const errorBag = await Validator(payload, {
+        let errorBag = await Validator(payload, {
             event: ['required', 'min:3'],
             date: ['required', 'date'],
             time: ['required'],
             place: ['required', 'min:3'],
         })
 
+        if (!req.files)
+            errorBag = { ...errorBag, rundown: 'Rundown image is required' }
+
         if (Object.keys(errorBag).length > 0) {
             return res.json({ error: errorBag, success: false })
         }
+
+        const rundown = UploadFile.store(
+            req.files.rundown,
+            '/public/uploads/rundown'
+        )
 
         await Meeting.create({
             ...payload,
             _id: new Types.ObjectId(),
             user: req.params.institute,
+            rundown,
         })
 
         return res.json({
@@ -116,7 +127,7 @@ async function show(req, res, next) {
 
 async function update(req, res, next) {
     try {
-        const payload = req.body
+        let payload = req.body
         const meeting = await Meeting.findById(req.params.id)
 
         const errorBag = await Validator(payload, {
@@ -128,6 +139,15 @@ async function update(req, res, next) {
 
         if (Object.keys(errorBag).length > 0) {
             return res.json({ error: errorBag, success: false })
+        }
+
+        if (req.files) {
+            const rundown = UploadFile.store(
+                req.files.rundown,
+                '/public/uploads/rundown'
+            )
+            UploadFile.destroy('public/uploads/rundown/' + meeting.rundown)
+            payload = { ...payload, rundown }
         }
 
         await meeting.updateOne(payload)
@@ -144,7 +164,8 @@ async function update(req, res, next) {
 
 async function destroy(req, res, next) {
     try {
-        await Meeting.findByIdAndDelete(req.params.id)
+        const meeting = await Meeting.findByIdAndDelete(req.params.id)
+        UploadFile.destroy('public/uploads/rundown/' + meeting.rundown)
         return res.json({
             message: 'Meeting deleted successfuly',
             success: true,

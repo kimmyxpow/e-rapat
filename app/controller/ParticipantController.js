@@ -99,7 +99,9 @@ async function checkOut(req, res, next) {
 
 async function show(req, res, next) {
     try {
-        const participant = await Participant.findById(req.params.id)
+        const participant = await Participant.findById(req.params.id).populate(
+            'meeting'
+        )
 
         res.json({
             participant,
