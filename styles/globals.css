@@ -1,48 +1,53 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
-    .table {
-        @apply bg-white pb-4 pt-2 px-8 rounded-xl overflow-x-auto w-full !block;
-    }
+	.table {
+		@apply bg-white pb-4 pt-2 px-8 rounded-xl overflow-x-auto w-full !block;
+	}
 
-    .table table {
-        @apply w-full;
-    }
+	.table table {
+		@apply w-full;
+	}
 
-    .table table thead th {
-        @apply font-normal text-zinc-400 px-4 whitespace-nowrap py-4 text-center;
-    }
+	.table table thead th {
+		@apply font-normal text-zinc-400 px-4 whitespace-nowrap py-4 text-center;
+	}
 
-    .table table tbody td {
-        @apply text-center whitespace-nowrap text-sm text-zinc-600 border-b border-zinc-100 px-4 py-4;
-    }
+	.table table tbody td {
+		@apply text-center whitespace-nowrap text-sm text-zinc-600 border-b border-zinc-100 px-4 py-4;
+	}
 
-    #html5qr-code-full-region__scan_region {
-        @apply flex justify-center;
-    }
+	#html5qr-code-full-region__scan_region {
+		@apply flex justify-center;
+	}
 
-    #html5qr-code-full-region__scan_region video {
-        @apply rounded-lg;
-        transform: rotateY(180deg);
-}
+	#html5qr-code-full-region__scan_region video {
+		@apply md:rounded-lg;
+	}
 
-    #html5qr-code-full-region {
-        @apply !border-none;
-    }
+	@media (min-width: 768px) {
+		#html5qr-code-full-region__scan_region video {
+			transform: rotateY(180deg);
+		}
+	}
 
-    #html5qr-code-full-region__dashboard_section {
-        @apply space-y-4;
-    }
+	#html5qr-code-full-region {
+		@apply !border-none;
+	}
 
-    #html5qr-code-full-region__dashboard_section_csr {
-        @apply py-2 w-full px-4 bg-indigo-600 rounded text-white font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 !no-underline cursor-pointer;
-    }
+	#html5qr-code-full-region__dashboard_section {
+		@apply space-y-4;
+	}
 
-    #html5qr-code-full-region__dashboard_section_swaplink {
-        @apply py-2 w-full px-4 bg-indigo-200 text-indigo-600 rounded font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 inline-block text-center !no-underline cursor-pointer;
-    }
+	#html5qr-code-full-region__dashboard_section_csr {
+		@apply py-2 w-full px-4 bg-indigo-600 rounded text-white font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 !no-underline cursor-pointer;
+	}
+
+	#html5qr-code-full-region__dashboard_section_swaplink {
+		@apply py-2 w-full px-4 bg-indigo-200 text-indigo-600 rounded font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200 inline-block text-center !no-underline cursor-pointer;
+	}
 }

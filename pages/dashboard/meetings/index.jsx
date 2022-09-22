@@ -34,10 +34,12 @@ const Index = ({ token, s_meetings, _id, role }) => {
 		date: '',
 		time: '',
 		place: '',
+		rundown: '',
 		_id: '',
 	})
 	const [isOpenCreate, setIsOpenCreate] = useState(false)
 	const [isOpenEdit, setIsOpenEdit] = useState(false)
+	const [isOpenRundown, setIsOpenRundown] = useState(false)
 	const [errors, setErrors] = useState({})
 	const [success, setSuccess] = useState({})
 
@@ -60,6 +62,7 @@ const Index = ({ token, s_meetings, _id, role }) => {
 			date: '',
 			time: '',
 			place: '',
+			rundown: '',
 			_id: '',
 		})
 	}
@@ -67,6 +70,24 @@ const Index = ({ token, s_meetings, _id, role }) => {
 	function openModalEdit(data, e) {
 		setFields({ ...fields, ...data })
 		setIsOpenEdit(true)
+	}
+
+	function openModalRundown(data, e) {
+		setIsOpenRundown(true)
+		setFields({ ...fields, ...data })
+	}
+
+	function closeModalRundown() {
+		setIsOpenRundown(false)
+		setFields({
+			...fields,
+			event: '',
+			date: '',
+			time: '',
+			place: '',
+			rundown: '',
+			_id: '',
+		})
 	}
 
 	const loadMeetings = async () => {
@@ -111,15 +132,16 @@ const Index = ({ token, s_meetings, _id, role }) => {
 	async function createHandler(e) {
 		e.preventDefault()
 
+		const body = new FormData(e.target)
+
 		const req = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}`,
 			{
 				method: 'POST',
 				headers: {
 					Authorization: 'Bearer ' + token,
-					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(fields),
+				body,
 			},
 		)
 
@@ -135,15 +157,16 @@ const Index = ({ token, s_meetings, _id, role }) => {
 	async function editHandler(e) {
 		e.preventDefault()
 
+		const body = new FormData(e.target)
+
 		const req = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_API}/meetings/${_id}/${fields._id}`,
 			{
 				method: 'PUT',
 				headers: {
 					Authorization: 'Bearer ' + token,
-					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify(fields),
+				body,
 			},
 		)
 
@@ -300,6 +323,15 @@ const Index = ({ token, s_meetings, _id, role }) => {
 													Lihat Peserta
 												</a>
 											</Link>
+											<button
+												onClick={openModalRundown.bind(
+													this,
+													meeting,
+												)}
+												className={`py-2 px-6 bg-pink-600 rounded-md text-white font-semibold ring ring-transparent focus:ring-pink-400 transition-all duration-200 inline-block`}
+											>
+												Rundown
+											</button>
 											{role == 'admin' && (
 												<>
 													<button
@@ -374,6 +406,7 @@ const Index = ({ token, s_meetings, _id, role }) => {
 									</Dialog.Title>
 
 									<form
+										encType='multipart/form-data'
 										action='#'
 										onSubmit={createHandler.bind(this)}
 										className='space-y-6'
@@ -477,6 +510,33 @@ const Index = ({ token, s_meetings, _id, role }) => {
 													</span>
 												) : undefined}
 											</div>
+											<div className='grid gap-2'>
+												<label
+													className='font-semibold text-zinc-600'
+													htmlFor='rundown'
+												>
+													Rundown
+												</label>
+												<input
+													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
+													type='file'
+													accept='image/*'
+													name='rundown'
+													id='rundown'
+													onInput={fieldHandler.bind(
+														this,
+													)}
+													value={fields.rundown}
+													placeholder='Ketik disini...'
+												/>
+												{errors && errors.rundown ? (
+													<span className='text-sm text-red-600 font-medium capitalize'>
+														{capitalFirst(
+															errors.rundown,
+														)}
+													</span>
+												) : undefined}
+											</div>
 										</div>
 										<div className='grid grid-cols-2 gap-2'>
 											<button
@@ -539,6 +599,7 @@ const Index = ({ token, s_meetings, _id, role }) => {
 									</Dialog.Title>
 
 									<form
+										encType='multipart/form-data'
 										action='#'
 										onSubmit={editHandler.bind(this)}
 										className='space-y-6'
@@ -646,6 +707,32 @@ const Index = ({ token, s_meetings, _id, role }) => {
 													</span>
 												) : undefined}
 											</div>
+											<div className='grid gap-2'>
+												<label
+													className='font-semibold text-zinc-600'
+													htmlFor='rundown'
+												>
+													Rundown
+												</label>
+												<input
+													className='py-2.5 px-6 focus:outline-none ring ring-transparent focus:ring-indigo-600 text-zinc-600 rounded-lg transition-all duration-300 lg:w-auto w-full bg-zinc-200'
+													type='file'
+													accept='image/*'
+													name='rundown'
+													id='rundown'
+													onInput={fieldHandler.bind(
+														this,
+													)}
+													placeholder='Ketik disini...'
+												/>
+												{errors && errors.rundown ? (
+													<span className='text-sm text-red-600 font-medium capitalize'>
+														{capitalFirst(
+															errors.rundown,
+														)}
+													</span>
+												) : undefined}
+											</div>
 										</div>
 										<div className='grid grid-cols-2 gap-2'>
 											<button
@@ -662,6 +749,57 @@ const Index = ({ token, s_meetings, _id, role }) => {
 											</button>
 										</div>
 									</form>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition>
+
+			<Transition appear show={isOpenRundown} as={Fragment}>
+				<Dialog
+					as='div'
+					className='relative z-10'
+					onClose={closeModalRundown}
+				>
+					<Transition.Child
+						as={Fragment}
+						enter='ease-out duration-300'
+						enterFrom='opacity-0'
+						enterTo='opacity-100'
+						leave='ease-in duration-200'
+						leaveFrom='opacity-100'
+						leaveTo='opacity-0'
+					>
+						<div className='fixed inset-0 bg-black bg-opacity-25' />
+					</Transition.Child>
+
+					<div className='fixed inset-0 overflow-y-auto'>
+						<div className='flex min-h-full items-center justify-center p-4 text-center'>
+							<Transition.Child
+								as={Fragment}
+								enter='ease-out duration-300'
+								enterFrom='opacity-0 scale-95'
+								enterTo='opacity-100 scale-100'
+								leave='ease-in duration-200'
+								leaveFrom='opacity-100 scale-100'
+								leaveTo='opacity-0 scale-95'
+							>
+								<Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white px-10 py-8 text-left align-middle shadow-xl transition-all space-y-6'>
+									<Dialog.Title
+										as='h3'
+										className='text-xl font-bold text-zinc-800'
+									>
+										Rundown {fields.event}
+									</Dialog.Title>
+
+									<picture>
+										<img
+											className='w-full rounded-lg mt-4'
+											src={`${process.env.NEXT_PUBLIC_BASE_API}/uploads/rundown/${fields.rundown}`}
+											alt={fields.event}
+										/>
+									</picture>
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>

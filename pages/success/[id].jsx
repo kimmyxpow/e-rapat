@@ -49,6 +49,13 @@ const CheckIn = () => {
 						rapat kali ini!
 					</p>
 				</div>
+				<Link href='/'>
+					<a
+						className={`py-2 w-full px-4 bg-indigo-600 block text-center rounded text-white font-semibold ring ring-transparent focus:ring-indigo-600 transition-all duration-200`}
+					>
+						Kembali ke halaman utama
+					</a>
+				</Link>
 			</div>
 			<div className='bg-zinc-800 absolute md:right-0 md:inset-y-0 md:w-1/2 md:h-auto bottom-0 inset-x-0 md:inset-x-auto h-1/2'>
 				<div id='particles-js' className='h-full w-full'></div>
