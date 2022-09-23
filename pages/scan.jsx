@@ -52,11 +52,6 @@ const Scan = () => {
 					<h1 className='text-3xl font-bold text-zinc-800'>
 						Silakan Scan QR
 					</h1>
-					<Link href='/'>
-						<a className='text-zinc-600 inline-block hover:underline'>
-							Kembali ke halaman login
-						</a>
-					</Link>
 				</div>
 				{status == 2 && (
 					<span className='block py-3 px-8 rounded-lg bg-red-200 text-red-600 border border-red-400 text-center'>
@@ -76,6 +71,13 @@ const Scan = () => {
 						qrCodeSuccessCallback={onNewScanResult}
 					/>
 				)}
+				<Link Link href='/'>
+					<a
+						className={`py-2 w-full px-4 bg-red-600 rounded text-white font-semibold ring ring-transparent focus:ring-red-600 transition-all duration-200 block text-center`}
+					>
+						Kembali ke halaman login
+					</a>
+				</Link>
 			</div>
 			<ParticlesBackground />
 		</div>
