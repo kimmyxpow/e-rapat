@@ -227,7 +227,7 @@ const particlesConfig = {
 			},
 		},
 		color: {
-			value: '#ff0000',
+			value: '#4f46e5',
 			animation: {
 				h: {
 					count: 0,
