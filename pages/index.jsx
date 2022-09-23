@@ -8,6 +8,7 @@ import { useState } from 'react'
 import Router from 'next/router'
 import nookies from 'nookies'
 import Link from 'next/link'
+import ParticlesBackground from '@/components/ParticlesBackground'
 
 export async function getServerSideProps(ctx) {
 	await unauthPage(ctx)
@@ -60,7 +61,6 @@ export default function Home({}) {
 
 	return (
 		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
-			<div className="bg-[url('/img/patterns-dark.svg')] bg-cover absolute md:left-0 md:inset-y-0 md:w-1/2 md:h-auto top-0 inset-x-0 md:inset-x-auto h-1/2 z-0"></div>
 			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
@@ -155,9 +155,7 @@ export default function Home({}) {
 					</div>
 				</form>
 			</div>
-			<div className='bg-zinc-800 absolute md:right-0 md:inset-y-0 md:w-1/2 md:h-auto bottom-0 inset-x-0 md:inset-x-auto h-1/2'>
-				<div id='particles-js' className='h-full w-full'></div>
-			</div>
+			<ParticlesBackground />
 		</div>
 	)
 }
