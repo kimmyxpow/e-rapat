@@ -161,7 +161,7 @@ const Categories = ({ token, s_categories, _id }) => {
 	}, [fields])
 
 	return (
-		<Layout title='Kategori Peserta'>
+		<Layout title='Kategori Peserta' pageTitle='Categories | E-Rapat'>
 			<div className='space-y-4'>
 				<div className='flex justify-between items-center flex-wrap gap-x-2 gap-y-4'>
 					<div className='flex gap-2 flex-wrap sm:w-auto w-full'>

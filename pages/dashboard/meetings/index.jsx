@@ -206,7 +206,7 @@ const Index = ({ token, s_meetings, _id, role }) => {
 	}, [fields])
 
 	return (
-		<Layout title='Rapat'>
+		<Layout title='Rapat' pageTitle='Meetings | E-Rapat'>
 			<div className='space-y-4'>
 				<div className='flex justify-between items-center flex-wrap gap-x-2 gap-y-4'>
 					<div className='flex gap-2 flex-wrap sm:w-auto w-full'>

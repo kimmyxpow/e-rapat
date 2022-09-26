@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { LinkIcon, StarIcon } from '@heroicons/react/24/outline'
 import { unRegisterMeetingPage } from '@/middlewares/registerMeeting'
 import ParticlesBackground from '@/components/ParticlesBackground'
+import GuestLayout from '@/components/GuestLayout'
 
 export async function getServerSideProps(ctx) {
 	const { id } = ctx.query
@@ -24,12 +25,15 @@ export async function getServerSideProps(ctx) {
 			.end()
 
 	return {
-		props: {},
+		props: { meeting: participant.meeting, participant },
 	}
 }
-const CheckIn = () => {
+const CheckIn = ({ meeting, participant }) => {
 	return (
-		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
+		<GuestLayout
+			pageTitle={`Sukses Mengikuti Rapat ${meeting.event} - ${participant.name} | E-Rapat`}
+			particle='success'
+		>
 			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
@@ -57,8 +61,7 @@ const CheckIn = () => {
 					</a>
 				</Link>
 			</div>
-			<ParticlesBackground status='success' />
-		</div>
+		</GuestLayout>
 	)
 }
 

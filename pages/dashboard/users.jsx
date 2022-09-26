@@ -160,7 +160,7 @@ const Users = ({ token, s_users, _id }) => {
 	}, [fields])
 
 	return (
-		<Layout title='User'>
+		<Layout title='User' pageTitle='Users | E-Rapat'>
 			<div className='space-y-4'>
 				<div className='flex justify-between items-center flex-wrap gap-x-2 gap-y-4'>
 					<div className='flex gap-2 flex-wrap sm:w-auto w-full'>

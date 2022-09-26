@@ -26,10 +26,10 @@ export async function getServerSideProps(ctx) {
 			.end()
 
 	return {
-		props: { id, meeting: participant.meeting },
+		props: { id, meeting: participant.meeting, participant },
 	}
 }
-const CheckOut = ({ id, meeting }) => {
+const CheckOut = ({ id, meeting, participant }) => {
 	const router = useRouter()
 	const [status, setStatus] = useState(0)
 	const [copyStatus, setCopyStatus] = useState(0)
@@ -80,7 +80,9 @@ const CheckOut = ({ id, meeting }) => {
 	}
 
 	return (
-		<GuestLayout>
+		<GuestLayout
+			pageTitle={`Check Out Rapat ${meeting.event} - ${participant.name} | E-Rapat`}
+		>
 			<div className='bg-white p-10 relative z-10 md:w-[800px] w-[400px] max-w-full shadow-2xl rounded-xl space-y-8'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>

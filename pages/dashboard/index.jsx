@@ -64,7 +64,7 @@ const Index = ({ token, s_meetings, role, _id }) => {
 	}
 
 	return (
-		<Layout title='Rapat Hari Ini'>
+		<Layout title='Rapat Hari Ini' pageTitle='Dashboard | E-Rapat'>
 			<div className='space-y-4'>
 				<div className='flex justify-between flex-wrap gap-x-2 gap-y-4'>
 					<div className='bg-zinc-200 px-4 rounded-lg flex items-center gap-2 ring ring-transparent focus-within:ring-indigo-600 transition-all duration-200 lg:w-auto w-full'>

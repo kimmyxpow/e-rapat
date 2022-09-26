@@ -61,7 +61,7 @@ export default function Home({}) {
 	}
 
 	return (
-		<GuestLayout>
+		<GuestLayout pageTitle='Login | E-Rapat'>
 			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
