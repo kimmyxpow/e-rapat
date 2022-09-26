@@ -9,6 +9,7 @@ import Router from 'next/router'
 import nookies from 'nookies'
 import Link from 'next/link'
 import ParticlesBackground from '@/components/ParticlesBackground'
+import GuestLayout from '@/components/GuestLayout'
 
 export async function getServerSideProps(ctx) {
 	await unauthPage(ctx)
@@ -60,7 +61,7 @@ export default function Home({}) {
 	}
 
 	return (
-		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
+		<GuestLayout>
 			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
@@ -155,7 +156,6 @@ export default function Home({}) {
 					</div>
 				</form>
 			</div>
-			<ParticlesBackground />
-		</div>
+		</GuestLayout>
 	)
 }

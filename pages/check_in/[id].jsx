@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { LinkIcon, StarIcon } from '@heroicons/react/24/outline'
 import { unRegisterMeetingPage } from '@/middlewares/registerMeeting'
 import ParticlesBackground from '@/components/ParticlesBackground'
+import GuestLayout from '@/components/GuestLayout'
 
 export async function getServerSideProps(ctx) {
 	const { id } = ctx.query
@@ -63,7 +64,7 @@ const CheckIn = ({ id, meeting }) => {
 	}
 
 	return (
-		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
+		<GuestLayout>
 			<div className='bg-white p-10 relative z-10 md:w-[800px] w-[400px] max-w-full shadow-2xl rounded-xl space-y-8'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
@@ -147,8 +148,7 @@ const CheckIn = ({ id, meeting }) => {
 					</div>
 				</div>
 			</div>
-			<ParticlesBackground />
-		</div>
+		</GuestLayout>
 	)
 }
 

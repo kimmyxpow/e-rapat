@@ -13,6 +13,7 @@ import nookies from 'nookies'
 import Router from 'next/router'
 import capitalFirst from '@/utils/capitalFirst'
 import ParticlesBackground from '@/components/ParticlesBackground'
+import GuestLayout from '@/components/GuestLayout'
 
 export async function getServerSideProps(ctx) {
 	await registerMeetingPage(ctx)
@@ -98,7 +99,7 @@ const Register = ({ categories, users, meeting }) => {
 	}
 
 	return (
-		<div className='min-h-screen flex items-center justify-center relative overflow-x-hidden py-14'>
+		<GuestLayout>
 			<div className='bg-white p-10 relative z-10 w-[400px] max-w-full shadow-2xl rounded-xl space-y-6'>
 				<div className='flex items-center gap-2 justify-center'>
 					<picture>
@@ -340,8 +341,7 @@ const Register = ({ categories, users, meeting }) => {
 					</div>
 				</form>
 			</div>
-			<ParticlesBackground />
-		</div>
+		</GuestLayout>
 	)
 }
 
