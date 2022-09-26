@@ -1,11 +1,12 @@
 import Html5QrcodePlugin from '@/components/Html5QrcodePlugin'
-import Link from 'next/link'
 import React, { useState } from 'react'
-import nookies from 'nookies'
 import { useRouter } from 'next/router'
-import { LinkIcon, StarIcon } from '@heroicons/react/24/outline'
-import { unRegisterMeetingPage } from '@/middlewares/registerMeeting'
-import ParticlesBackground from '@/components/ParticlesBackground'
+import {
+	CheckCircleIcon,
+	ClipboardIcon,
+	LinkIcon,
+	StarIcon,
+} from '@heroicons/react/24/outline'
 import GuestLayout from '@/components/GuestLayout'
 
 export async function getServerSideProps(ctx) {
@@ -31,7 +32,9 @@ export async function getServerSideProps(ctx) {
 const CheckOut = ({ id, meeting }) => {
 	const router = useRouter()
 	const [status, setStatus] = useState(0)
+	const [copyStatus, setCopyStatus] = useState(0)
 	const url = process.env.NEXT_PUBLIC_APP_URL + router.asPath
+	let timeoutId
 
 	async function loadParticipant(id) {
 		const req = await fetch(
@@ -61,6 +64,19 @@ const CheckOut = ({ id, meeting }) => {
 		)
 
 		router.push(`/success/${id}`)
+	}
+
+	function copyLinkHandler(e) {
+		const value = e.target.parentElement.querySelector('input').value
+		navigator.clipboard.writeText(value)
+
+		setCopyStatus(1)
+
+		if (timeoutId) clearTimeout(timeoutId)
+
+		timeoutId = setTimeout(() => {
+			setCopyStatus(0)
+		}, 3000)
 	}
 
 	return (
@@ -99,9 +115,17 @@ const CheckOut = ({ id, meeting }) => {
 								</p>
 							</div>
 							<div className='flex items-center'>
-								<div className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg'>
-									<LinkIcon className='w-4' />
-								</div>
+								<button
+									type='button'
+									onClick={copyLinkHandler.bind(this)}
+									className='grid place-items-center bg-zinc-800 text-white min-h-[2.5rem] min-w-[2.5rem] max-h-[2.5rem] max-w-[2.5rem] rounded-l-lg hover:bg-zinc-700 ring ring-transparent focus:ring-indigo-600 transition-all duration-200 focus:z-10'
+								>
+									{copyStatus == 0 ? (
+										<ClipboardIcon className='w-4 pointer-events-none' />
+									) : (
+										<CheckCircleIcon className='w-4 pointer-events-none' />
+									)}
+								</button>
 								<input
 									className='py-2 focus:outline-none w-full px-4 bg-zinc-200 rounded-r-lg text-zinc-600 ring ring-transparent focus:ring-indigo-600 transition-all duration-200'
 									value={url}

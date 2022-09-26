@@ -1,7 +1,5 @@
 import Html5QrcodePlugin from '@/components/Html5QrcodePlugin'
-import Link from 'next/link'
 import React, { useState } from 'react'
-import nookies from 'nookies'
 import { useRouter } from 'next/router'
 import {
 	CheckCircleIcon,
@@ -9,8 +7,6 @@ import {
 	LinkIcon,
 	StarIcon,
 } from '@heroicons/react/24/outline'
-import { unRegisterMeetingPage } from '@/middlewares/registerMeeting'
-import ParticlesBackground from '@/components/ParticlesBackground'
 import GuestLayout from '@/components/GuestLayout'
 
 export async function getServerSideProps(ctx) {
